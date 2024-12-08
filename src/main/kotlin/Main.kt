@@ -67,10 +67,23 @@ fun main() = application {
     ) {
         val manager = remember { BoardManager() }
         TicTacToe(manager)
+        // simulacija vremena za razlicite algoritme
         LaunchedEffect(Unit) {
-            //manager.demo()
-            delay(200)
-            manager.playAI()
+            val start: Double = System.currentTimeMillis().toDouble()
+            manager.demo()
+            val time = ((System.currentTimeMillis() - start) / 1000).toDouble()
+            println("Obican minimax zavrsen za: ${time} sekundi")
+
+            delay(3000)
+            manager.resetBoard()
+
+            val start1: Double = System.currentTimeMillis().toDouble()
+            manager.demoAlphaBeta()
+            val time1 = ((System.currentTimeMillis() - start1) / 1000)
+            println("Minimax algoritam optimizovan alfa-beta obrezivanjem zavrsen za: ${time1} sekundi")
+
+            delay(3000)
+            manager.resetBoard()
         }
     }
 }

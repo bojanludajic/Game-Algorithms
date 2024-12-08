@@ -1,5 +1,4 @@
 import androidx.compose.runtime.*
-import kotlinx.coroutines.delay
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,9 +32,6 @@ class Board {
         }
     }
 
-    /**
-     *
-     */
     fun play(board: Array<Array<Char>>, i: Int, j: Int) {
         val newBoard = board.mapIndexed { rowInd, row ->
             row.mapIndexed { colInd, col ->
@@ -43,117 +39,14 @@ class Board {
             }.toTypedArray()
         }.toTypedArray()
 
-        curSign = if(curSign == 'X') 'O' else 'X'
+        switchSign()
         this.board = newBoard
-    }
-
-    private fun playSim(board: Array<Array<Char>>, i: Int, j: Int) {
-        board[i][j] = curSign
-        curSign = if(curSign == 'X') 'O' else 'X'
-    }
-
-    fun playAI() {
-        val i: Int
-        val j: Int
-        if(curSign == 'X') {
-            i = getBestMoveX().first
-            j = getBestMoveX().second
-        } else {
-            i = getBestMoveO().first
-            j = getBestMoveO().second
-
-        }
-        play(board, i, j)
     }
 
     fun undo(board: Array<Array<Char>>, i: Int, j: Int) {
         board[i][j] = ' '
-        curSign = if(curSign == 'X') 'O' else 'X'
+        switchSign()
 
-    }
-
-    /**
-     *  Minimax algoritam koji trazi najbolji moguci potez
-     */
-    fun minimax(board: Array<Array<Char>>, depth: Int, maximizing: Boolean): Int {
-        val winner = check()
-        // terminalno stanje, vrsi se evaluacija stanja
-        if(winner != ' ') {
-            return when(winner) {
-                'X' -> 1
-                'O' -> -1
-                else -> 0
-            }
-        }
-
-        if(maximizing) {
-            var best = Int.MIN_VALUE
-            for(i in 0..2) {
-                for(j in 0..2) {
-                    if(board[i][j] == ' ') {
-                        playSim(board, i, j)
-                        val score = minimax(board, depth + 1, false)
-                        undo(board, i, j)
-                        best = max(best, score)
-                    }
-                }
-            }
-            return best
-        } else {
-            var best = Int.MAX_VALUE
-            for(i in 0..2) {
-                for(j in 0..2) {
-                    if(board[i][j] == ' ') {
-                        playSim(board, i, j)
-                        val score = minimax(board, depth + 1, true)
-                        undo(board, i, j)
-                        best = min(best, score)
-                    }
-                }
-            }
-            return best
-        }
-
-    }
-
-    fun getBestMoveX(): Pair<Int, Int> {
-        var bestScore = Int.MIN_VALUE
-        var bestMove: Pair<Int, Int> = 0 to 0
-
-        for(i in 0..2) {
-            for(j in 0..2) {
-                if(board[i][j] == ' ') {
-                    playSim(board, i, j)
-                    val score = minimax(board, 0, false)
-                    undo(board, i, j)
-                    if(score > bestScore) {
-                        bestScore = score
-                        bestMove = i to j
-                    }
-                }
-            }
-        }
-        return bestMove
-    }
-
-    fun getBestMoveO(): Pair<Int, Int> {
-        var bestScore = Int.MAX_VALUE
-        var bestMove: Pair<Int, Int> = 0 to 0
-
-        for(i in 0..2) {
-            for(j in 0..2) {
-                if(board[i][j] == ' ') {
-                    playSim(board, i, j)
-                    val score = minimax(board, 0, true)
-                    undo(board, i, j)
-                    if(score < bestScore) {
-                        bestScore = score
-                        bestMove = i to j
-                    }
-                }
-            }
-        }
-        return bestMove
     }
 
     fun printBoard() {
@@ -165,21 +58,15 @@ class Board {
         println()
     }
 
-    /**
-     *  Simulacija racunar sam protiv sebe (uvek nereseno)
-     */
-    suspend fun runAIvsAI() {
-        var winner = ' '
-        while (winner == ' ') {
-            printBoard()
-            playAI()
-            delay(1000)
-            winner = check()
-            if (winner != ' ') break
-            playAI()
-            winner = check()
-            delay(1000)
-        }
-        printBoard() // za debagovanje
+    fun resetBoard() {
+        board = arrayOf(
+            arrayOf(' ', ' ', ' '),
+            arrayOf(' ', ' ', ' '),
+            arrayOf(' ', ' ', ' ')
+        )
+    }
+
+    fun switchSign() {
+        curSign = if(curSign == 'X') 'O' else 'X'
     }
 }

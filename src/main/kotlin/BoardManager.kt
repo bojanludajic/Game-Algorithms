@@ -8,7 +8,7 @@ import kotlinx.coroutines.*
 class BoardManager {
 
     private var board by mutableStateOf(Board())
-    private var busy = false
+    private var busy by mutableStateOf(false)
 
     fun get(i: Int, j: Int): Char {
         return board.board[i][j]
@@ -28,13 +28,27 @@ class BoardManager {
         board.printBoard()
     }
 
+    fun playAIOptimal() {
+        board.playAIAlphaBeta()
+    }
+
     fun play(i: Int, j: Int) {
-        if(board.isSafe(i, j)) {
+        if(board.isSafe(i, j) && board.check() == ' ') {
             CoroutineScope(Dispatchers.Default).launch {
                 board.play(board.board, i, j)
                 busy = true
                 delay(500)
-                playAI()
+                if(board.check() == ' ') {
+                    playAIOptimal()
+                    if(board.check() != ' ') {
+                        delay(500)
+                        board.switchSign()
+                        board.resetBoard()
+                    }
+                } else {
+                    board.switchSign()
+                    board.resetBoard()
+                }
                 busy = false
             }
         }
@@ -42,6 +56,14 @@ class BoardManager {
 
     suspend fun demo() {
         board.runAIvsAI()
+    }
+
+    suspend fun demoAlphaBeta() {
+        board.runAIvsAIAlphaBeta()
+    }
+
+    fun resetBoard() {
+        board.resetBoard()
     }
 }
 
