@@ -1,9 +1,12 @@
+package algorithms
+
+import model.Board
 import kotlin.math.max
 import kotlin.math.min
 
 /**
  * Fajl namenjen za lepse skladistenje funkcija vezanih za alpha-beta pruning algoritam
- * iz klase Board, kako bi njen glavni fajl bio citljiviji. Realizovano pomocu Kotlin
+ * iz klase model.Board, kako bi njen glavni fajl bio citljiviji. Realizovano pomocu Kotlin
  * extension funkcija. U najboljem slucaju vremenska kompleksnost se svodi na
  * O(b^(d/2)) - gde je b prosecan broj poteza po stanju, a d dubina stabla igre.
  * U najgorem slucaju algoritam sve, logicno, svodi na minimaks algoritam.
@@ -11,7 +14,7 @@ import kotlin.math.min
  */
 
 /**
- * Alpha-beta pruning (obrezivanje) algoritam primenjen nad stablom igre, kako
+ * Alpha-beta pruning (obrezivanje) minimax algoritam primenjen nad stablom igre, kako
  * bi se izbegla evaluacija podstabala do kojih se nikada ne bi ni stizalo.
  */
 private fun Board.minimaxAlphaBeta(
@@ -24,8 +27,8 @@ private fun Board.minimaxAlphaBeta(
     val winner = check()
     if (winner != ' ') {
         return when (winner) {
-            'X' -> 1
-            'O' -> -1
+            'X' -> 10 - depth
+            'O' -> depth - 10
             else -> 0
         }
     }
@@ -110,19 +113,6 @@ fun Board.getBestMoveOAlphaBeta(): Pair<Int, Int> {
     return bestMove
 }
 
-fun Board.runAIvsAIAlphaBeta() {
-    var winner = ' '
-    while (winner == ' ') {
-        playAIAlphaBeta()
-        //delay(1000)
-        winner = check()
-        if (winner != ' ') break
-        playAIAlphaBeta()
-        winner = check()
-        //delay(1000)
-    }
-}
-
 fun Board.playAIAlphaBeta() {
     val i: Int
     val j: Int
@@ -135,4 +125,17 @@ fun Board.playAIAlphaBeta() {
 
     }
     play(board, i, j)
+}
+
+fun Board.runAIvsAIAlphaBeta() {
+    var winner = ' '
+    while (winner == ' ') {
+        playAIAlphaBeta()
+        //delay(1000)
+        winner = check()
+        if (winner != ' ') break
+        playAIAlphaBeta()
+        winner = check()
+        //delay(1000)
+    }
 }

@@ -1,17 +1,31 @@
+import algorithms.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.*
+import model.Board
 
 
 class BoardManager {
 
     private var board by mutableStateOf(Board())
     private var busy by mutableStateOf(false)
+    private val difficulties = mutableListOf("Easy", "Medium", "Impossible")
+    private var difficulty by mutableStateOf(9)
 
     fun get(i: Int, j: Int): Char {
         return board.board[i][j]
+    }
+
+    fun getDifficulties(): MutableList<String> = difficulties
+
+    fun setDifficulty(difficulty: String) {
+        when(difficulty) {
+            "Easy" -> this.difficulty = 1
+            "Medium" -> this.difficulty = 3
+            "Impossible" -> this.difficulty = 9
+        }
     }
 
     fun isClickable() = !busy
@@ -23,9 +37,8 @@ class BoardManager {
         else -> Color.White
     }
 
-    fun playAI() {
-        board.playAI()
-        board.printBoard()
+    fun playAI(difficulty: Int) {
+        board.playAI(difficulty)
     }
 
     fun playAIOptimal() {
@@ -39,7 +52,7 @@ class BoardManager {
                 busy = true
                 delay(500)
                 if(board.check() == ' ') {
-                    playAIOptimal()
+                    playAI(difficulty)
                     if(board.check() != ' ') {
                         delay(500)
                         board.switchSign()

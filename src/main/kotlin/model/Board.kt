@@ -1,6 +1,6 @@
+package model
+
 import androidx.compose.runtime.*
-import kotlin.math.max
-import kotlin.math.min
 
 class Board {
 
@@ -10,6 +10,7 @@ class Board {
         arrayOf(' ', ' ', ' ')
     ))
     var curSign = 'X'
+    var moves = 0
 
     fun isSafe(i: Int, j: Int): Boolean {
         return board[i][j] == ' '
@@ -64,9 +65,17 @@ class Board {
             arrayOf(' ', ' ', ' '),
             arrayOf(' ', ' ', ' ')
         )
+        curSign = 'X'
     }
 
     fun switchSign() {
         curSign = if(curSign == 'X') 'O' else 'X'
+    }
+
+    fun copy(): Board {
+        val newBoard = Board()
+        newBoard.board = this.board.map { it.clone() }.toTypedArray()
+        newBoard.curSign = this.curSign
+        return newBoard
     }
 }

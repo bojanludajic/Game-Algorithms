@@ -2,57 +2,112 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TicTacToe(
     manager: BoardManager
 ) {
-    Column(
+    var expanded by mutableStateOf(false)
+    val difficulties = manager.getDifficulties()
+    var selectedOptionText by remember { mutableStateOf(difficulties[2]) }
+
+    Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        repeat(3) { rowIndex ->
-            Row(
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = true,
+                onExpandedChange = {
+                    expanded = !expanded
+                },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
+                    .padding(10.dp)
+
             ) {
-                repeat(3) { colIndex ->
-                    val bgColor = manager.backgroundColor()
-                    Box(
-                        modifier = Modifier
-                            .border(2.dp, Color.Black)
-                            .fillMaxSize()
-                            .weight(1f)
-                            .background(bgColor)
-                            .then(if (manager.isClickable()) Modifier.clickable {
-                                manager.play(rowIndex, colIndex)
-                            } else Modifier
-                            )
-
-                    ) {
-                        Text(
-                            text = "${manager.get(rowIndex, colIndex)}",
-                            modifier = Modifier
-                                .align(Alignment.Center),
-                            style = MaterialTheme.typography.h1
+                TextField(
+                    readOnly = true,
+                    value = selectedOptionText,
+                    onValueChange = {  },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
                         )
+                    },
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
                     }
+                ) {
+                    manager.getDifficulties().forEach { selectionOption ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedOptionText = selectionOption
+                                manager.setDifficulty(selectionOption)
+                                expanded = false
+                            }
+                        ){
+                            Text(text = selectionOption)
+                        }
+                    }
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize(0.75f)
+        ) {
+            repeat(3) { rowIndex ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                ) {
+                    repeat(3) { colIndex ->
+                        val bgColor = manager.backgroundColor()
+                        Box(
+                            modifier = Modifier
+                                .border(2.dp, Color.Black)
+                                .fillMaxSize()
+                                .weight(1f)
+                                .background(bgColor)
+                                .then(if (manager.isClickable()) Modifier.clickable {
+                                    manager.play(rowIndex, colIndex)
+                                } else Modifier
+                                )
+                        ) {
+                            Text(
+                                text = "${manager.get(rowIndex, colIndex)}",
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                style = MaterialTheme.typography.h1
+                            )
+                        }
 
+                    }
                 }
             }
         }
@@ -63,27 +118,9 @@ fun main() = application {
     Window(
         title = "Tic-Tac-Toe Minimax",
         onCloseRequest = ::exitApplication,
-        resizable = false
+        //resizable = false
     ) {
         val manager = remember { BoardManager() }
         TicTacToe(manager)
-        // simulacija vremena za razlicite algoritme
-        LaunchedEffect(Unit) {
-            val start: Double = System.currentTimeMillis().toDouble()
-            manager.demo()
-            val time = ((System.currentTimeMillis() - start) / 1000).toDouble()
-            println("Obican minimax zavrsen za: ${time} sekundi")
-
-            delay(3000)
-            manager.resetBoard()
-
-            val start1: Double = System.currentTimeMillis().toDouble()
-            manager.demoAlphaBeta()
-            val time1 = ((System.currentTimeMillis() - start1) / 1000)
-            println("Minimax algoritam optimizovan alfa-beta obrezivanjem zavrsen za: ${time1} sekundi")
-
-            delay(3000)
-            manager.resetBoard()
-        }
     }
 }
