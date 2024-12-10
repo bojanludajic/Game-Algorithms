@@ -25,12 +25,14 @@ private fun Board.minimaxAlphaBeta(
     beta: Int,
     maximizing: Boolean
 ): Int {
-    val winner = check()
-    if (winner != ' ') {
-        return when (winner) {
-            'X' -> 10 - depth
-            'O' -> depth - 10
-            else -> 0
+    if(moves >= 5) {
+        val winner = check()
+        if (winner != ' ') {
+            return when (winner) {
+                'X' -> 10 - depth
+                'O' -> depth - 10
+                else -> 0
+            }
         }
     }
 
@@ -43,8 +45,10 @@ private fun Board.minimaxAlphaBeta(
             for (j in 0..2) {
                 if (isSafe(i, j)) {
                     playSim(board, i, j)
+                    moves++
                     val score = minimaxAlphaBeta(board, depth + 1, a, b, false)
                     undo(board, i, j)
+                    moves--
                     best = max(best, score)
                     a = max(a, score)
                     if (b <= a) {
@@ -60,8 +64,10 @@ private fun Board.minimaxAlphaBeta(
             for (j in 0..2) {
                 if (isSafe(i, j)) {
                     playSim(board, i, j)
+                    moves++
                     val score = minimaxAlphaBeta(board, depth + 1, a, b, true)
                     undo(board, i, j)
+                    moves--
                     best = min(best, score)
                     b = min(b, score)
                     if (b <= a) {
@@ -143,11 +149,9 @@ fun Board.runAIvsAIAlphaBeta() {
     var winner = ' '
     while (winner == ' ') {
         playAIAlphaBeta()
-        //delay(1000)
         winner = check()
         if (winner != ' ') break
         playAIAlphaBeta()
         winner = check()
-        //delay(1000)
     }
 }

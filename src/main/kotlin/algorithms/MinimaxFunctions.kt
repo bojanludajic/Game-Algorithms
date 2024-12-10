@@ -23,14 +23,21 @@ import kotlin.math.min
  *  se dve najduze pretrage. Takodje, dodate su tezine u vidu ogranicenja na maksimalnu
  *  dubinu stabla, gde racunar mora da nagadja ukoliko jos ne postoji terminalno stanje.
  */
-fun Board.minimax(board: Array<Array<Char>>, depth: Int, maximizing: Boolean, maxDepth: Int): Int {
-    val winner = check()
-    // terminalno stanje, vrsi se evaluacija stanja
-    if (winner != ' ') {
-        return when (winner) {
-            'X' -> 10 - depth
-            'O' -> depth - 10
-            else -> 0
+fun Board.minimax(
+    board: Array<Array<Char>>,
+    depth: Int,
+    maximizing: Boolean,
+    maxDepth: Int
+): Int {
+    if(moves >= 5) {
+        val winner = check()
+        // terminalno stanje, vrsi se evaluacija stanja
+        if (winner != ' ') {
+            return when (winner) {
+                'X' -> 10 - depth
+                'O' -> depth - 10
+                else -> 0
+            }
         }
     }
 
@@ -44,7 +51,9 @@ fun Board.minimax(board: Array<Array<Char>>, depth: Int, maximizing: Boolean, ma
             for (j in 0..2) {
                 if (isSafe(i, j)) {
                     playSim(board, i, j)
+                    moves++
                     val score = minimax(board, depth + 1, false, maxDepth)
+                    moves--
                     undo(board, i, j)
                     best = max(best, score)
                 }
@@ -57,7 +66,9 @@ fun Board.minimax(board: Array<Array<Char>>, depth: Int, maximizing: Boolean, ma
             for (j in 0..2) {
                 if (isSafe(i, j)) {
                     playSim(board, i, j)
+                    moves++
                     val score = minimax(board, depth + 1, true, maxDepth)
+                    moves--
                     undo(board, i, j)
                     best = min(best, score)
                 }
@@ -92,7 +103,7 @@ fun Board.getBestMoveX(difficulty: Int): Pair<Int, Int> {
 }
 
 fun Board.getBestMoveO(difficulty: Int): Pair<Int, Int> {
-    if (moves == 2 && isSafe(1, 1) && difficulty > 3) {
+    if (moves == 2 && isSafe(1, 1) && difficulty > 5) {
         return (1 to 1)
     }
 
@@ -139,16 +150,13 @@ fun Board.playAI(difficulty: Int) {
 /**
  *  Simulacija racunar sam protiv sebe (uvek nereseno)
  */
-suspend fun Board.runAIvsAI() {
+fun Board.runAIvsAI() {
     var winner = ' '
     while (winner == ' ') {
         playAI(9)
-        //delay(1000)
         winner = check()
         if (winner != ' ') break
         playAI(9)
         winner = check()
-        //delay(1000)
     }
-    //printBoard() // za debagovanje
 }

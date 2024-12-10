@@ -7,14 +7,17 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.delay
+import java.io.File
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -76,6 +79,19 @@ fun TicTacToe(
                     }
                 }
             }
+
+            Button(
+                onClick = {
+                    manager.resetBoard()
+                },
+                modifier = Modifier
+                    .padding(10.dp)
+            ) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = null
+                )
+            }
         }
         Column(
             modifier = Modifier
@@ -123,22 +139,5 @@ fun main() = application {
     ) {
         val manager = remember { BoardManager() }
         TicTacToe(manager)
-        LaunchedEffect(Unit) {
-            delay(1000)
-
-            val start = System.currentTimeMillis()
-            manager.demo()
-            val end = System.currentTimeMillis()
-            println("Minimax algoritam gotov za: ${(end - start).toDouble() / 1000} sekundi.")
-            manager.resetBoard()
-            delay(1000)
-
-            val start1 = System.currentTimeMillis()
-            manager.demoAlphaBeta()
-            val end1 = System.currentTimeMillis()
-            println("Alpha beta pruning algoritam gotov za: ${(end1 - start1).toDouble() / 1000} sekundi.")
-            delay(1000)
-            manager.resetBoard()
-        }
     }
 }

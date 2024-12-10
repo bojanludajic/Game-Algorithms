@@ -22,8 +22,8 @@ class BoardManager {
 
     fun setDifficulty(difficulty: String) {
         when(difficulty) {
-            "Easy" -> this.difficulty = 1
-            "Medium" -> this.difficulty = 3
+            "Easy" -> this.difficulty = 4
+            "Medium" -> this.difficulty = 5
             "Impossible" -> this.difficulty = 9
         }
     }
@@ -67,7 +67,7 @@ class BoardManager {
         }
     }
 
-    suspend fun demo() {
+    fun demo() {
         board.runAIvsAI()
     }
 

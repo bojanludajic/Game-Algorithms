@@ -12,6 +12,7 @@ class Board {
     var curSign = 'X'
     var moves = 0
 
+
     fun isSafe(i: Int, j: Int): Boolean {
         return board[i][j] == ' '
     }
@@ -39,9 +40,8 @@ class Board {
                 if(rowInd == i && colInd == j) curSign else col
             }.toTypedArray()
         }.toTypedArray()
-
-        moves++
         switchSign()
+        moves++
         this.board = newBoard
     }
 
@@ -79,5 +79,20 @@ class Board {
         newBoard.board = this.board.map { it.clone() }.toTypedArray()
         newBoard.curSign = this.curSign
         return newBoard
+    }
+
+    fun getKeyAsBitmask(): Int {
+        var key = 0
+        for (i in 0..2) {
+            for (j in 0..2) {
+                key = key shl 2
+                key = key or when (board[i][j]) {
+                    'X' -> 1
+                    'O' -> 2
+                    else -> 0
+                }
+            }
+        }
+        return key
     }
 }
