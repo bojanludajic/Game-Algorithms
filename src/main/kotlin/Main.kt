@@ -1,3 +1,4 @@
+import algorithms.runAIvsAIAlphaBeta
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -122,5 +123,22 @@ fun main() = application {
     ) {
         val manager = remember { BoardManager() }
         TicTacToe(manager)
+        LaunchedEffect(Unit) {
+            delay(1000)
+
+            val start = System.currentTimeMillis()
+            manager.demo()
+            val end = System.currentTimeMillis()
+            println("Minimax algoritam gotov za: ${(end - start).toDouble() / 1000} sekundi.")
+            manager.resetBoard()
+            delay(1000)
+
+            val start1 = System.currentTimeMillis()
+            manager.demoAlphaBeta()
+            val end1 = System.currentTimeMillis()
+            println("Alpha beta pruning algoritam gotov za: ${(end1 - start1).toDouble() / 1000} sekundi.")
+            delay(1000)
+            manager.resetBoard()
+        }
     }
 }

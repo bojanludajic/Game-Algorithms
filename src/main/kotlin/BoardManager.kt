@@ -71,7 +71,7 @@ class BoardManager {
         board.runAIvsAI()
     }
 
-    suspend fun demoAlphaBeta() {
+    fun demoAlphaBeta() {
         board.runAIvsAIAlphaBeta()
     }
 

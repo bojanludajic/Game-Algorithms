@@ -40,6 +40,7 @@ class Board {
             }.toTypedArray()
         }.toTypedArray()
 
+        moves++
         switchSign()
         this.board = newBoard
     }
@@ -66,6 +67,7 @@ class Board {
             arrayOf(' ', ' ', ' ')
         )
         curSign = 'X'
+        moves = 0
     }
 
     fun switchSign() {

@@ -1,5 +1,6 @@
 package algorithms
 
+import kotlinx.coroutines.delay
 import model.Board
 import kotlin.math.max
 import kotlin.math.min
@@ -74,6 +75,10 @@ private fun Board.minimaxAlphaBeta(
 }
 
 fun Board.getBestMoveXAlphaBeta(): Pair<Int, Int> {
+    if(moves == 1) {
+        return (1 to 1)
+    }
+
     var bestScore = Int.MIN_VALUE
     var bestMove: Pair<Int, Int> = 0 to 0
 
@@ -94,6 +99,10 @@ fun Board.getBestMoveXAlphaBeta(): Pair<Int, Int> {
 }
 
 fun Board.getBestMoveOAlphaBeta(): Pair<Int, Int> {
+    if(moves == 2 && isSafe(1, 1)) {
+        return (1 to 1)
+    }
+
     var bestScore = Int.MAX_VALUE
     var bestMove: Pair<Int, Int> = 0 to 0
 
@@ -114,20 +123,23 @@ fun Board.getBestMoveOAlphaBeta(): Pair<Int, Int> {
 }
 
 fun Board.playAIAlphaBeta() {
+    moves++
     val i: Int
     val j: Int
     if (curSign == 'X') {
-        i = getBestMoveXAlphaBeta().first
-        j = getBestMoveXAlphaBeta().second
+        val pair = getBestMoveXAlphaBeta()
+        i = pair.first
+        j = pair.second
     } else {
-        i = getBestMoveOAlphaBeta().first
-        j = getBestMoveOAlphaBeta().second
-
+        val pair = getBestMoveOAlphaBeta()
+        i  = pair.first
+        j = pair.second
     }
     play(board, i, j)
 }
 
 fun Board.runAIvsAIAlphaBeta() {
+    moves = 0
     var winner = ' '
     while (winner == ' ') {
         playAIAlphaBeta()
