@@ -13,10 +13,12 @@ import kotlin.math.min
 
 /**
  *  Minimax algoritam koji trazi najbolji moguci potez. Ovaj algoritam proverava
- *  celo stablo igre, dok ne dodje do terminalnih stanja, u kojima vrsi evaluaciju,
- *  i u zavisnosti od ishoda, dodeljuje vednost tom listu (1 - za pobedu 'X', 0 za
- *  nereseno i -1 za pobedu 'O'). Nakon sto dodje do terminalnog stanja, rekurzivno
- *  se vraca i u zavisnosti od toga koji igrac je na redu u svakom prethodnom stanju.
+ *  celo stablo igre, pri cemu pretpostavlja da ce protivnik igrati optimalno, sve
+ *  dok ne dodje do terminalnih stanja, u kojima vrsi evaluaciju, i u zavisnosti od
+ *  ishoda, dodeljuje vednost tom listu pri cemu on prioritizuje dubinu, cime se
+ *  dolazi do ranijih pobeda i ne traci se vreme. Nakon sto dodje do terminalnog stanja,
+ *  rekurzivno se vraca i u zavisnosti od toga koji igrac je na redu u svakom
+ *  prethodnom stanju.
  *
  *  Ddoatno: algoritam ce za prvih 1-2 poteza probati da "forsira" racunar da igra
  *  u centar, jer se ovim nece smanjiti sansa za pobedu, a eliminisace
@@ -30,6 +32,10 @@ fun Board.minimax(
     maxDepth: Int
 ): Int {
     if(moves >= 5) {
+        if (depth == maxDepth) {
+            return 0
+        }
+
         val winner = check()
         // terminalno stanje, vrsi se evaluacija stanja
         if (winner != ' ') {
@@ -39,10 +45,6 @@ fun Board.minimax(
                 else -> 0
             }
         }
-    }
-
-    if (depth == maxDepth) {
-        return 0
     }
 
     if (maximizing) {

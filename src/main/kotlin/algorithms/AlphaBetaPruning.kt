@@ -11,7 +11,6 @@ import kotlin.math.min
  * extension funkcija. U najboljem slucaju vremenska kompleksnost se svodi na
  * O(b^(d/2)) - gde je b prosecan broj poteza po stanju, a d dubina stabla igre.
  * U najgorem slucaju algoritam sve, logicno, svodi na minimaks algoritam.
- * Prosecno vreme za AI vs AI partiju: 0.081 sec (7.7 puta brze vreme izvrsavanj)
  */
 
 /**
